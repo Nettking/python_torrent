@@ -11,6 +11,7 @@ ENV PUID=1000
 ENV PGID=1000
 
 # Optional authentication
+# IMPORTANT: Example login credentials. Change USER and PASS before using this image.
 ENV USER=admin
 ENV PASS=change_this_password
 
