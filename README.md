@@ -19,7 +19,7 @@ A minimal, Docker-based [Transmission](https://transmissionbt.com/) BitTorrent c
    cd python_torrent
    ```
 
-2. **Before starting the service, edit `docker-compose.yml`:** replace the committed `USER` and `PASS` values with credentials unique to your deployment. The password currently in the repository is public and **must not be considered secure**. Adjust `PUID`, `PGID`, and `TZ` to match your host, and consider limiting access to port 9091 as described under [Security](#security).
+2. **Before starting the service, edit `docker-compose.yml`:** replace the committed `USER` and `PASS` values with credentials unique to your deployment. These are example credentials, not evidence of a leaked private password, but the default password is publicly known and should not be used for a reachable deployment. Adjust `PUID`, `PGID`, and `TZ` to match your host, and consider limiting access to port 9091 as described under [Security](#security).
 
 3. Create the bind-mount directories:
 
@@ -57,7 +57,7 @@ The checked-in `docker-compose.yml` defines these environment variables:
 | `PGID` | `1000` | Host group ID used for file ownership. |
 | `TZ` | `Europe/Oslo` | Container timezone. |
 | `USER` | `admin` | Transmission web interface username; change before use. |
-| `PASS` | Hard-coded in Compose | Transmission web interface password; replace before use and do not reuse it elsewhere. |
+| `PASS` | `strongpassword` (example) | Transmission web interface password; replace the example for an actual deployment. The optional Dockerfile separately uses `change_this_password`. |
 | `PEERPORT` | `51413` | Torrent peer-listening port; keep it aligned with the published TCP/UDP mappings. |
 
 On Linux, `id -u` and `id -g` show your current user and group IDs. The configured IDs must be able to write to the bind-mounted directories.
@@ -110,7 +110,7 @@ The Compose service has `restart: unless-stopped`, so Docker will normally resta
 
 ## Security
 
-> **Important:** The current Compose file contains a hard-coded login and password in a **public repository**. Treat those credentials as exposed. Replace them before deployment, rotate them on existing deployments, and do not commit replacement secrets.
+> **Example credentials, not a reported leak:** `docker-compose.yml` uses `USER=admin` and `PASS=strongpassword`, while the optional `dockerfile` uses `PASS=change_this_password`. These are illustrative defaults. If you deploy with those values unchanged, the login is predictable; replace them before making the service reachable, and update any deployed instance still using them. Do not commit real secrets.
 
 - Web traffic on port `9091` is plain HTTP in this configuration; a password alone does **not** provide TLS encryption. Prefer a trusted private network, a VPN/SSH tunnel, or a properly secured HTTPS reverse proxy.
 - Avoid exposing port `9091` to the public internet. If access is local only, consider changing the binding to `127.0.0.1:9091:9091`. Peer ports `51413/tcp+udp` serve a different purpose and can be managed separately.
